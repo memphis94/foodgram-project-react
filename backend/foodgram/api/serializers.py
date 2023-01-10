@@ -1,14 +1,14 @@
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext as _
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
+
 from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
                             ShoppingCart, Tag)
-from rest_framework import serializers
 from users.models import Follow
 from users.serializers import CustomUserSerializers
 
 
-class FollowRecipeSerializers(serializers.ModelSerializer):   
+class FollowRecipeSerializers(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
@@ -98,17 +98,17 @@ class RecipeSerializers(serializers.ModelSerializer):
             for ingredient in ingredients:
                 if ingredient.get('id') in ingredients_list:
                     raise ValidationError(
-                        _('Ингредиент может быть добавлен только один раз'))
+                        'Ингредиент может быть добавлен только один раз')
                 if int(ingredient.get('amount')) <= 0:
                     raise ValidationError(
-                        _('Добавьте количество для ингредиента больше 0')
-                    )
+                        'Добавьте количество для ингредиента больше 0')
+
                 ingredients_list[ingredient.get('id')] = (
                     ingredients_list.get('amount')
                 )
             return data
         else:
-            raise ValidationError(_('Добавьте ингредиент в рецепт'))
+            raise ValidationError('Добавьте ингредиент в рецепт')
 
     def ingredient_recipe_create(self, ingredients_set, recipe):
         for ingredient_get in ingredients_set:
@@ -149,7 +149,7 @@ class RecipeSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class FavoriteSerializers(serializers.ModelSerializer):    
+class FavoriteSerializers(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='recipe.id')
     name = serializers.ReadOnlyField(source='recipe.name')
     image = serializers.ImageField(source='recipe.image')

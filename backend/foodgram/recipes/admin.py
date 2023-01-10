@@ -24,16 +24,16 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ('author', 'name', 'tags')
     inlines = [IngredientInLine]
 
-    def favorites(self, obj):        
+    def favorites(self, obj):
         return obj.favorites.count()
 
 
-class ShoppingCartAdmin(admin.ModelAdmin):    
+class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe')
     search_fields = ('user', 'recipe',)
 
 
-class FavoriteAdmin(admin.ModelAdmin):    
+class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'user')
     list_filter = ('user',)
 

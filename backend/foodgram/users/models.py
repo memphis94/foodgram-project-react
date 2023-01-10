@@ -3,10 +3,10 @@ from django.db import models
 
 
 class User(AbstractUser):
-    ADMIN = 'admin'    
+    ADMIN = 'admin'
     USER = 'user'
     ROLES = (
-        (ADMIN, 'Administrator'),        
+        (ADMIN, 'Administrator'),
         (USER, 'User'),
     )
 

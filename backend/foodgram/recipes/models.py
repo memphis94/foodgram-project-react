@@ -1,10 +1,11 @@
 from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator
 from django.db import models
+
 from users.models import User
 
 
-class Tag(models.Model):    
+class Tag(models.Model):
     name = models.CharField('Имя', max_length=50, unique=True)
     color = ColorField('Цвет HEX', unique=True)
     slug = models.SlugField('Слаг', unique=True)
@@ -18,7 +19,7 @@ class Tag(models.Model):
         verbose_name_plural = 'Теги'
 
 
-class Ingredient(models.Model):    
+class Ingredient(models.Model):
     name = models.CharField('Имя', max_length=150, unique=True)
     measurement_unit = models.CharField('Единица измерения', max_length=60)
 
@@ -31,7 +32,7 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
 
-class Recipe(models.Model):   
+class Recipe(models.Model):
     tags = models.ManyToManyField(Tag, verbose_name='Тег')
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
