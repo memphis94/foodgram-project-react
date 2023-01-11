@@ -6,8 +6,8 @@ from users.models import User
 
 
 class Tag(models.Model):
-    name = models.CharField('Имя', max_length=50)
-    color = ColorField('Цвет HEX', unique=True)
+    name = models.CharField('Название', max_length=50)
+    color = ColorField('Цвет по коду HEX', unique=True)
     slug = models.SlugField('Слаг', unique=True)
 
     def __str__(self):
@@ -20,7 +20,7 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    name = models.CharField('Имя', max_length=150)
+    name = models.CharField('Название', max_length=150)
     measurement_unit = models.CharField('Единица измерения', max_length=60)
 
     def __str__(self):
@@ -38,7 +38,7 @@ class Recipe(models.Model):
                                on_delete=models.CASCADE,
                                related_name='recipes',
                                verbose_name='Автор')
-    name = models.CharField('Имя', max_length=200, unique=True)
+    name = models.CharField('Название', max_length=200, unique=True)
     image = models.ImageField('Изображение', upload_to='recipe/')
     text = models.TextField('Описание')
     cooking_time = models.PositiveIntegerField(

@@ -16,9 +16,9 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ['username', 'email']
 
 
-@admin.register(Follow)
-class FollowAdmin(admin.ModelAdmin):
+# @admin.register(Follow)
+# class FollowAdmin(admin.ModelAdmin):
 
-    list_display = ['user', 'author']
-    list_filter = ['user', 'author']
-    empty_value_display = '-пусто-'
+#     list_display = ['user', 'author']
+#     list_filter = ['user', 'author']
+#     empty_value_display = '-пусто-'
