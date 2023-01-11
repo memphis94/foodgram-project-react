@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     'django_filters',
     'api',
     'users',
-    'recipes',    
+    'recipes',
     'colorfield',
 ]
 
