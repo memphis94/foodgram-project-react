@@ -7,7 +7,7 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-fsnrknk&*4_m_1n$3af-uogk5q3_c)%ha=w8)7s2r9fa$x$z!w'
+SECRET_KEY = os.getenv(key='SECRET_KEY')
 
 DEBUG = True
 
@@ -28,7 +28,8 @@ INSTALLED_APPS = [
     'django_filters',
     'api',
     'users',
-    'recipes',
+    'recipes',    
+    'colorfield',
 ]
 
 MIDDLEWARE = [
@@ -64,12 +65,12 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE'),
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT')
+        'ENGINE': os.getenv('DB_ENGINE', default="django.db.backends.postgresql"),
+        'NAME': os.getenv('DB_NAME', default="postgres"),
+        'USER': os.getenv('POSTGRES_USER', default="postgres"),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default="postgres"),
+        'HOST': os.getenv('DB_HOST', default="db"),
+        'PORT': os.getenv('DB_PORT', default="5432")
     }
 }
 
