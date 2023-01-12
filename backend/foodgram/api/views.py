@@ -1,12 +1,12 @@
-from datetime import datetime
-
 from django.db.models import Sum
 from django.http import HttpResponse
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import permissions, status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
 from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
@@ -19,7 +19,8 @@ from .pagination import CustomPagination
 from .permissions import AuthorOrReadOnly
 from .serializers import (FavoriteSerializers, FollowUserSerializers,
                           IngredientSerializers, RecipeSerializers,
-                          ShoppingCardSerializers, TagSerializers)
+                          RecipeWriteSerializers, ShoppingCardSerializers,
+                          TagSerializers)
 
 
 class CustomUserViewSet(UserViewSet):
@@ -80,11 +81,15 @@ class IngredientViewSet(ListRetrieveCustomViewSet):
 
 class RecipeViewSet(CustomRecipeModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializers
     pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend, )
     filter_class = RecipeFilter
     permission_classes = (AuthorOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.request.method in SAFE_METHODS:
+            return RecipeSerializers
+        return RecipeWriteSerializers
 
     @action(detail=True, methods=['post', 'delete'],
             permission_classes=[permissions.IsAuthenticated])
@@ -120,9 +125,9 @@ class RecipeViewSet(CustomRecipeModelViewSet):
             recipe__shopping_carts__user=user).values(
                 'ingredient__name',
                 'ingredient__measurement_unit').order_by(
-                    'ingredient__name').annotate(amount=Sum('amount'))
+                    'ingredient__name').annotate(total_amount=Sum('amount'))
 
-        today = datetime.today()
+        today = timezone.now().date()
         shopping_list = (
             f'Список покупок для: {user.get_full_name()}\n\n'
             f'Дата: {today:%Y-%m-%d}\n\n'
@@ -130,7 +135,7 @@ class RecipeViewSet(CustomRecipeModelViewSet):
         shopping_list += '\n'.join([
             f'- {ingredient["ingredient__name"]} '
             f'({ingredient["ingredient__measurement_unit"]})'
-            f' - {ingredient["amount"]}'
+            f' - {ingredient["total_amount"]}'
             for ingredient in ingredients
         ])
         shopping_list += f'\n\nFoodgram ({today:%Y})'

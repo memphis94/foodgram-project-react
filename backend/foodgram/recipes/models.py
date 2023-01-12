@@ -13,10 +13,10 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta():
-        ordering = ['-name']
+    class Meta:
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
+        ordering = ['-name']
 
 
 class Ingredient(models.Model):
@@ -26,10 +26,10 @@ class Ingredient(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta():
-        ordering = ['-name']
+    class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+        ordering = ['-name']
 
 
 class Recipe(models.Model):
@@ -49,10 +49,10 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta():
-        ordering = ['-id']
+    class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
+        ordering = ['-id']
 
 
 class IngredientRecipe(models.Model):
@@ -66,10 +66,16 @@ class IngredientRecipe(models.Model):
                                verbose_name='Рецепт')
     amount = models.PositiveSmallIntegerField('Количество')
 
-    class Meta():
-        ordering = ['-id']
+    class Meta:
         verbose_name = 'Ингредиент для рецепта'
         verbose_name_plural = 'Ингредиенты для рецептов'
+        ordering = ['-id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='recipe_ingredient_unique'
+            )
+        ]
 
 
 class Favorite(models.Model):
@@ -85,10 +91,16 @@ class Favorite(models.Model):
     def __str__(self):
         return f'избранное пользователя {self.user}'
 
-    class Meta():
-        ordering = ['-id']
+    class Meta:
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
+        ordering = ['-id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='user_recipe_unique'
+            )
+        ]
 
 
 class ShoppingCart(models.Model):
@@ -104,9 +116,12 @@ class ShoppingCart(models.Model):
     def __str__(self):
         return f'список покупок пользователя {self.user}'
 
-    class Meta():
-        ordering = ['-id']
+    class Meta:
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
-        models.UniqueConstraint(
-            fields=['user', 'recipe'], name='unique_recipe_user')
+        ordering = ['-id']
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'recipe'],
+                                    name='unique_recipe_user'
+                                    )
+        ]

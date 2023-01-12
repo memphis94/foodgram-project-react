@@ -27,17 +27,13 @@ class User(AbstractUser):
     def is_admin(self):
         return self.role == self.ADMIN or self.is_superuser
 
-    @property
-    def is_banned(self):
-        return self.role == self.BANNED
-
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
     class Meta:
-        ordering = ['-id']
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+        ordering = ['-id']
 
 
 class Follow(models.Model):
@@ -51,9 +47,11 @@ class Follow(models.Model):
         related_name='following',
         verbose_name='Автор')
 
-    class Meta():
-        ordering = ['-id']
+    class Meta:
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
-        models.UniqueConstraint(
-            fields=['user', 'author'], name='unique_subscription')
+        ordering = ['-id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'], name='unique_subscription')
+        ]
