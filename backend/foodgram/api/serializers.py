@@ -137,11 +137,8 @@ class RecipeWriteSerializers(serializers.ModelSerializer):
             ) for ingredient_get in ingredients_set]
         )
 
-    def create(self, validated_data):
-        image = validated_data.pop('image')
-        recipe = Recipe.objects.create(image=image,
-                                       author=self.context['request'].user,
-                                       **validated_data)
+    def create(self, validated_data):   
+        recipe = Recipe.objects.create(**validated_data)
         tags = validated_data.pop('tags')
         recipe.tags.set(tags)
         ingredients_set = validated_data.pop('ingredients')
