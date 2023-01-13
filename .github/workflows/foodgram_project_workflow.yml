@@ -66,6 +66,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
+            sudo docker images -a |  grep "food" | awk '{print $3}' | xargs sudo docker rmi
             sudo docker-compose stop
             sudo docker-compose rm backend
             touch .env
