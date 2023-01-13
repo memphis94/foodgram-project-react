@@ -109,24 +109,21 @@ class RecipeWriteSerializers(serializers.ModelSerializer):
         model = Recipe
         fields = '__all__'
 
-    def validate(self, data):
-        ingredients = data.pop('ingredients')
-        valid_ingredients = {}
-        if ingredients:
-            for ingredient in ingredients:
-                if ingredient.get('id') in valid_ingredients:
-                    raise ValidationError(
-                        'Ингредиент может быть добавлен только один раз')
-                if int(ingredient.get('amount')) <= 0:
-                    raise ValidationError(
-                        'Добавьте количество для ингредиента больше 0')
-
-                valid_ingredients[ingredient.get('id')] = (
-                    valid_ingredients.get('amount')
-                )
-            return data
-        else:
+    def validate_ingredients(self, data):
+        ingredients = data
+        if not ingredients:
             raise ValidationError('Добавьте ингредиент в рецепт')
+        valid_ingredients = []
+        for item in ingredients:
+            ingredient = get_object_or_404(Ingredient, id=item['id'])
+            if ingredient in valid_ingredients:
+                raise ValidationError(
+                    'Ингредиент может быть добавлен только один раз')
+            if int(item['amount']) <= 0:
+                raise ValidationError(
+                    'Добавьте количество для ингредиента больше 0')
+            valid_ingredients.append(ingredient)
+        return data
 
     def ingredient_recipe_create(self, ingredients_set, recipe):
         IngredientRecipe.objects.bulk_create(
