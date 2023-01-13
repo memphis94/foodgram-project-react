@@ -12,7 +12,6 @@ from rest_framework.response import Response
 from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
                             ShoppingCart, Tag)
 from users.models import Follow, User
-
 from .filters import IngredientSearchFilter, RecipeFilter
 from .mixins import CustomRecipeModelViewSet, ListRetrieveCustomViewSet
 from .pagination import CustomPagination
