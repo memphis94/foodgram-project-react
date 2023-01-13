@@ -110,7 +110,7 @@ class RecipeWriteSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate(self, data):
-        ingredients = data
+        ingredients = data.pop('ingredients')
         valid_ingredients = {}
         if ingredients:
             for ingredient in ingredients:
