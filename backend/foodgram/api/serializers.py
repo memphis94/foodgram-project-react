@@ -111,56 +111,53 @@ class RecipeWriteSerializers(serializers.ModelSerializer):
 
     def validate(self, data):
         ingredients = data
-        ingredients_id_list = {}
+        valid_ingredients = {}
         if ingredients:
             for ingredient in ingredients:
-                if ingredient.get('id') in ingredients_id_list:
+                if ingredient.get('id') in valid_ingredients:
                     raise ValidationError(
                         'Ингредиент может быть добавлен только один раз')
                 if int(ingredient.get('amount')) <= 0:
                     raise ValidationError(
                         'Добавьте количество для ингредиента больше 0')
 
-                ingredients_id_list[ingredient.get('id')] = (
-                    ingredients_id_list.get('amount')
+                valid_ingredients[ingredient.get('id')] = (
+                    valid_ingredients.get('amount')
                 )
             return data
         else:
             raise ValidationError('Добавьте ингредиент в рецепт')
 
     def ingredient_recipe_create(self, ingredients_set, recipe):
-        for ingredient_get in ingredients_set:
-            ingredient = get_object_or_404(
-                Ingredient,
-                id=ingredient_get['ingredient']['id']
-            )
-            IngredientRecipe.objects.bulk_create(
-                [IngredientRecipe
-                    (ingredient=ingredient,
-                     recipe=recipe,
-                     amount=ingredient_get.get('amount')
-                     )
-                 ])
+        IngredientRecipe.objects.bulk_create(
+            [IngredientRecipe(
+                ingredient_get=get_object_or_404(
+                    Ingredient,
+                    id=ingredient_get['ingredient']['id']
+                ),
+                recipe=recipe,
+                amount=ingredient_get['amount']
+            ) for ingredient_get in ingredients_set]
+        )
 
     def create(self, validated_data):
         image = validated_data.pop('image')
         recipe = Recipe.objects.create(image=image,
                                        author=self.context['request'].user,
                                        **validated_data)
-        tags = self.initial_data.get('tags')
+        tags = validated_data.pop('tags')
         recipe.tags.set(tags)
-        ingredients_set = self.initial_data.get('ingredients')
+        ingredients_set = validated_data.pop('ingredients')
         self.ingredient_recipe_create(ingredients_set, recipe)
         return recipe
 
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
         instance.tags.clear()
-        tags = self.initial_data.get('tags')
+        tags = validated_data.pop('tags')
         instance.tags.set(tags)
-        instance.save()
         IngredientRecipe.objects.filter(recipe=instance).delete()
-        ingredients_set = self.initial_data.get('ingredients')
+        ingredients_set = validated_data.pop('ingredients')
         self.ingredient_recipe_create(ingredients_set, instance)
         return instance
 

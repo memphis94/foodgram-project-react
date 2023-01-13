@@ -10,26 +10,26 @@ class Tag(models.Model):
     color = ColorField('Цвет по коду HEX', unique=True)
     slug = models.SlugField('Слаг', unique=True)
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
         ordering = ['-name']
+
+    def __str__(self):
+        return self.name
 
 
 class Ingredient(models.Model):
     name = models.CharField('Название', max_length=150)
     measurement_unit = models.CharField('Единица измерения', max_length=60)
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
         ordering = ['-name']
+
+    def __str__(self):
+        return self.name
 
 
 class Recipe(models.Model):
@@ -46,13 +46,13 @@ class Recipe(models.Model):
         validators=[MinValueValidator(limit_value=1,
                     message="Введите число больше единицы")])
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
         ordering = ['-id']
+
+    def __str__(self):
+        return self.name
 
 
 class IngredientRecipe(models.Model):
@@ -88,9 +88,6 @@ class Favorite(models.Model):
                                related_name="favorites",
                                verbose_name='Рецепт')
 
-    def __str__(self):
-        return f'избранное пользователя {self.user}'
-
     class Meta:
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
@@ -101,6 +98,9 @@ class Favorite(models.Model):
                 name='user_recipe_unique'
             )
         ]
+
+    def __str__(self):
+        return f'избранное пользователя {self.user}'
 
 
 class ShoppingCart(models.Model):
@@ -113,9 +113,6 @@ class ShoppingCart(models.Model):
                                related_name='shopping_carts',
                                verbose_name='Рецепт')
 
-    def __str__(self):
-        return f'список покупок пользователя {self.user}'
-
     class Meta:
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
@@ -125,3 +122,6 @@ class ShoppingCart(models.Model):
                                     name='unique_recipe_user'
                                     )
         ]
+
+    def __str__(self):
+        return f'список покупок пользователя {self.user}'
