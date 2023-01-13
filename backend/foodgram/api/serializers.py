@@ -130,7 +130,7 @@ class RecipeWriteSerializers(serializers.ModelSerializer):
             [IngredientRecipe(
                 ingredient_get=get_object_or_404(
                     Ingredient,
-                    id=ingredient_get['ingredient']['id']
+                    id=Ingredient.objects.get(id=ingredient_get['id'])
                 ),
                 recipe=recipe,
                 amount=ingredient_get['amount']
