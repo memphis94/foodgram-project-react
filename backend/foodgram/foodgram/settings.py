@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'djoser',
     'django_filters',
     'api',
-    'users',
+    'users.apps.UsersConfig',
     'recipes',
     'colorfield',
 ]
@@ -71,6 +71,13 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -86,7 +93,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = "ru"
+LANGUAGE_CODE = "ru-RU"
 
 TIME_ZONE = 'UTC'
 
