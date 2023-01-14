@@ -85,10 +85,6 @@ class RecipeSerializers(serializers.ModelSerializer):
         model = Recipe
         fields = '__all__'
 
-    def get_ingredients(self, obj):
-        ingredients = IngredientRecipe.objects.filter(recipe=obj)
-        return IngredientRecipeSerializers(ingredients, many=True).data
-
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
         if user.is_anonymous:
@@ -102,19 +98,11 @@ class RecipeSerializers(serializers.ModelSerializer):
         return ShoppingCart.objects.filter(user=user, recipe=obj.id).exists()
 
 
-class IngredientRecipeWriteSerializers(serializers.ModelSerializer):
-    id = serializers.IntegerField(write_only=True)
-
-    class Meta:
-        model = IngredientRecipe
-        fields = ('id', 'amount')
-
-
 class RecipeWriteSerializers(serializers.ModelSerializer):
     tags = PrimaryKeyRelatedField(queryset=Tag.objects.all(),
                                   many=True)
     author = CustomUserSerializers(read_only=True)
-    ingredients = IngredientRecipeWriteSerializers(read_only=True, many=True)
+    ingredients = IngredientRecipeSerializers(read_only=True, many=True)
     image = Base64ImageField()
 
     class Meta:
