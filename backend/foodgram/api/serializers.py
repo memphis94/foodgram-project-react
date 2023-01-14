@@ -85,6 +85,10 @@ class RecipeSerializers(serializers.ModelSerializer):
         model = Recipe
         fields = '__all__'
 
+    def get_ingredients(self, obj):
+        ingredients = IngredientRecipe.objects.filter(recipe=obj)
+        return IngredientRecipeSerializers(ingredients, many=True).data
+
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
         if user.is_anonymous:
