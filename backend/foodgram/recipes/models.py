@@ -45,6 +45,12 @@ class Recipe(models.Model):
         'Время приготовления',
         validators=[MinValueValidator(limit_value=1,
                     message="Введите число больше единицы")])
+    ingredients = models.ManyToManyField(
+        Ingredient,
+        through='IngredientRecipe',
+        related_name='recipes',
+        verbose_name='Ингредиенты'
+    )
 
     class Meta:
         verbose_name = 'Рецепт'
@@ -58,11 +64,10 @@ class Recipe(models.Model):
 class IngredientRecipe(models.Model):
     ingredient = models.ForeignKey(Ingredient,
                                    on_delete=models.CASCADE,
-                                   related_name='recipes',
                                    verbose_name='Ингредиент')
     recipe = models.ForeignKey(Recipe,
                                on_delete=models.CASCADE,
-                               related_name='ingredients',
+                               related_name='ingredient_list',
                                verbose_name='Рецепт')
     amount = models.PositiveSmallIntegerField('Количество')
 
