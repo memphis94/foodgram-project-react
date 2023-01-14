@@ -102,11 +102,19 @@ class RecipeSerializers(serializers.ModelSerializer):
         return ShoppingCart.objects.filter(user=user, recipe=obj.id).exists()
 
 
+class IngredientRecipeWriteSerializers(serializers.ModelSerializer):
+    id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = IngredientRecipe
+        fields = ('id', 'amount')
+
+
 class RecipeWriteSerializers(serializers.ModelSerializer):
     tags = PrimaryKeyRelatedField(queryset=Tag.objects.all(),
                                   many=True)
     author = CustomUserSerializers(read_only=True)
-    ingredients = IngredientRecipeSerializers(read_only=True, many=True)
+    ingredients = IngredientRecipeWriteSerializers(read_only=True, many=True)
     image = Base64ImageField()
 
     class Meta:
