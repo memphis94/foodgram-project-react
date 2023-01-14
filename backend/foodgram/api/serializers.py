@@ -147,12 +147,12 @@ class RecipeWriteSerializers(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
+        ingredients_set = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
         instance = super().update(instance, validated_data)
         instance.tags.clear()
-        tags = validated_data.pop('tags')
         instance.tags.set(tags)
         IngredientRecipe.objects.filter(recipe=instance).delete()
-        ingredients_set = self.validated_data.pop('ingredients')
         self.ingredient_recipe_create(ingredients_set, instance)
         return instance
 
