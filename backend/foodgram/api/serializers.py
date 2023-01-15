@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.db.models import F
 from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
@@ -60,30 +61,41 @@ class IngredientSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class IngredientRecipeSerializers(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(source='ingredient.id')
-    name = serializers.ReadOnlyField(source='ingredient.name')
-    measurement_unit = serializers.ReadOnlyField(
-        source='ingredient.measurement_unit'
-    )
-    amount = serializers.IntegerField()
+# class IngredientRecipeSerializers(serializers.ModelSerializer):
+#     id = serializers.ReadOnlyField(source='ingredient.id')
+#     name = serializers.ReadOnlyField(source='ingredient.name')
+#     measurement_unit = serializers.ReadOnlyField(
+#         source='ingredient.measurement_unit'
+#     )
+#     amount = serializers.IntegerField()
 
-    class Meta:
-        model = IngredientRecipe
-        fields = '__all__'
+#     class Meta:
+#         model = IngredientRecipe
+#         fields = '__all__'
 
 
 class RecipeSerializers(serializers.ModelSerializer):
     tags = TagSerializers(read_only=True, many=True)
     author = CustomUserSerializers(read_only=True)
     image = Base64ImageField()
-    ingredients = IngredientRecipeSerializers(read_only=True, many=True)
+    ingredients = serializers.SerializerMethodField()
+    # IngredientRecipeSerializers(read_only=True, many=True)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
         fields = '__all__'
+
+    def get_ingredients(self, obj):
+        recipe = obj
+        ingredients = recipe.ingredients.values(
+            'id',
+            'name',
+            'measurement_unit',
+            amount=F('ingredientinrecipe__amount')
+        )
+        return ingredients
 
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
