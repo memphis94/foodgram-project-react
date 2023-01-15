@@ -68,7 +68,7 @@ class IngredientRecipe(models.Model):
                                    verbose_name='Ингредиент')
     recipe = models.ForeignKey(Recipe,
                                on_delete=models.CASCADE,
-                               related_name='ingredients',
+                               related_name='ingredients_list',
                                verbose_name='Рецепт')
     amount = models.PositiveSmallIntegerField(
         'Количество',
