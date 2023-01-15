@@ -85,6 +85,9 @@ class RecipeViewSet(CustomRecipeModelViewSet):
     filter_class = RecipeFilter
     permission_classes = (AuthorOrReadOnly,)
 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
             return RecipeSerializers

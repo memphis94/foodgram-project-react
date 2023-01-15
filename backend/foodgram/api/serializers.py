@@ -98,11 +98,19 @@ class RecipeSerializers(serializers.ModelSerializer):
         return ShoppingCart.objects.filter(user=user, recipe=obj.id).exists()
 
 
+class IngredientRecipeWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = IngredientRecipe
+        fields = ('id', 'amount')
+
+
 class RecipeWriteSerializers(serializers.ModelSerializer):
     tags = PrimaryKeyRelatedField(queryset=Tag.objects.all(),
                                   many=True)
     author = CustomUserSerializers(read_only=True)
-    ingredients = IngredientRecipeSerializers(read_only=True, many=True)
+    ingredients = IngredientRecipeWriteSerializer(many=True)
     image = Base64ImageField()
 
     class Meta:
@@ -110,7 +118,7 @@ class RecipeWriteSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_ingredients(self, data):
-        ingredients = self.initial_data.get('ingredients')
+        ingredients = data
         if not ingredients:
             raise ValidationError('Добавьте ингредиент в рецепт')
         valid_ingredients = []
@@ -138,7 +146,7 @@ class RecipeWriteSerializers(serializers.ModelSerializer):
     def create(self, validated_data):
         image = validated_data.pop('image')
         tags = validated_data.pop('tags')
-        ingredients_set = self.initial_data.get('ingredients')
+        ingredients_set = validated_data.pop('ingredients')
         recipe = Recipe.objects.create(image=image,
                                        author=self.context['request'].user,
                                        **validated_data)
@@ -148,7 +156,7 @@ class RecipeWriteSerializers(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        ingredients_set = self.initial_data.get('ingredients')
+        ingredients_set = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         instance = super().update(instance, validated_data)
         instance.tags.clear()
