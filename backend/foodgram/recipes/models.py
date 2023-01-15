@@ -47,6 +47,7 @@ class Recipe(models.Model):
                     message="Введите число больше единицы")])
     ingredients = models.ManyToManyField(
         Ingredient,
+        related_name='recipes',
         through='IngredientRecipe',
         verbose_name='Ингредиенты'
     )
@@ -63,7 +64,7 @@ class Recipe(models.Model):
 class IngredientRecipe(models.Model):
     ingredient = models.ForeignKey(Ingredient,
                                    on_delete=models.CASCADE,
-                                   related_name='recipes',
+                                   # related_name='recipes',
                                    verbose_name='Ингредиент')
     recipe = models.ForeignKey(Recipe,
                                on_delete=models.CASCADE,
