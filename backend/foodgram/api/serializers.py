@@ -110,7 +110,7 @@ class RecipeWriteSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_ingredients(self, data):
-        ingredients = data
+        ingredients = self.initial_data.get('ingredients')
         if not ingredients:
             raise ValidationError('Добавьте ингредиент в рецепт')
         valid_ingredients = []
