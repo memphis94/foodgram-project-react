@@ -38,8 +38,13 @@ class FavoriteAdmin(admin.ModelAdmin):
     list_filter = ('user',)
 
 
+class IngredientRecipeAdmin(admin.ModelAdmin):
+    list_display = ('recipe', 'ingredient', 'amount',)
+
+
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Ingredient, IngredientAdmin)
 admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(ShoppingCart, ShoppingCartAdmin)
 admin.site.register(Favorite, FavoriteAdmin)
+admin.site.register(IngredientRecipe, IngredientRecipeAdmin)

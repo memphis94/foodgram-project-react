@@ -45,6 +45,11 @@ class Recipe(models.Model):
         'Время приготовления',
         validators=[MinValueValidator(limit_value=1,
                     message="Введите число больше единицы")])
+    ingredients = models.ManyToManyField(
+        Ingredient,
+        through='IngredientRecipe',
+        verbose_name='Ингредиенты'
+    )
 
     class Meta:
         verbose_name = 'Рецепт'
